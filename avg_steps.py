@@ -1,24 +1,31 @@
-from audioop import avg
 import csv
-from statistics import mean
+import calendar
 
 infile = open('steps.csv','r')
 csvfile = csv.reader(infile,delimiter=',')
+outfile = open('avg_steps.csv', 'w', newline='')
+
 next(csvfile)
+writer = csv.writer(outfile,delimiter=',')
+outfile.header = ['Month',' '+'Average Steps Taken']
+writer.writerow(outfile.header)
 
-m=0
-total=0
-a=0
-
+totalsteps=0
+month = 1
+count = 0
 
 for record in csvfile:
-    if int(record[0]) == 1:
-        m += 1
-        total += int(record[1])
-        print(total)
-        
-avg = round(total/m, 2)
+    if int(record[0]) == month:
+        count += 1
+        totalsteps += int(record[1])
+    #runs the sum, else statement needs to yield the average and display data
+    else:
+        average_steps = round((totalsteps / count), 2)
+        month_name = calendar.month_name[int(record[0])]
+        data = [month_name, average_steps]
+        writer.writerow(data)
+        month = int(record[0])
+        totalsteps = int(record[1])
+        count = 1
 
-avg = str(avg)
-
-print('January' + ', ' + avg)
+outfile.close()
